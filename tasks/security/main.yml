@@ -9,7 +9,7 @@
 
 - name: Add custom banner message file
   copy:
-    src: {{ banner_file }}
+    src: "{{ banner_file }}"
     dest: /etc/issue.net
     owner: root
     group: root
