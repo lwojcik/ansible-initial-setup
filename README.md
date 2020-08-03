@@ -1,4 +1,4 @@
-# ansible-initial-setup
+# ansible-role-initial-setup
 
 My custom Ansible role for initial setup of servers based on Debian. Ensures reasonable defaults for secure SSH login, sets up UFW and Fail2Ban, provides foundation for integrating with Cloudflare and more.
 
