@@ -1,0 +1,34 @@
+---
+- name: Ensure unattended-upgrades is installed
+  apt:
+    pkg: unattended-upgrades
+    state: present
+    cache_valid_time: "{{ cache_valid_time }}"
+    update_cache: yes
+
+- name: Ensure apt-listchanges is installed
+  apt:
+    pkg: apt-listchanges
+    state: present
+    cache_valid_time: "{{ cache_valid_time }}"
+    update_cache: yes
+
+- name: Configure APT auto-upgrades
+  lineinfile:
+    dest: /etc/apt/apt.conf.d/20auto-upgrades
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+    state: present
+  with_items:
+    - regexp: "^APT::Periodic::Update-Package-Lists"
+      line: 'APT::Periodic::Update-Package-Lists \"1\";'
+    - regexp: "^APT::Periodic::Unattended-Upgrade"
+      line: 'APT::Periodic::Unattended-Upgrade \"1\";'
+  notify: restart unattended-upgrades
+
+- name: Ensure unattended-upgrades is running
+  service:
+    name: unattended-upgrades
+    state: started
+
+# TODO: more 'conscious' config so that I know when it runs and what it does

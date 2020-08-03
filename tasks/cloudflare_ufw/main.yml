@@ -1,0 +1,28 @@
+---
+- name: Git clone cloudflare-ufw repo
+  git:
+    repo: 'https://github.com/Paul-Reed/cloudflare-ufw.git'
+    dest: '/home/{{ deploy_user }}/cloudflare-ufw'
+    update: yes
+  become: false
+
+- name: Ensure cloudflare-ufw.sh is executable
+  file:
+    dest: '/home/{{ deploy_user }}/cloudflare-ufw/cloudflare-ufw.sh'
+    mode: a+x
+
+- name: Run cloudflare-ufw.sh
+  command: sh '/home/{{ deploy_user }}/cloudflare-ufw/cloudflare-ufw.sh'
+  register: result
+  changed_when: '"Rule added" in result.stdout'
+
+- name: Schedule cloudflare-ufw.sh as weekly cron
+  cron:
+    name: "cloudflare-ufw.sh"
+    minute: '2'
+    hour: '0'
+    day: '*'
+    month: '*'
+    weekday: '1'
+    job: '/home/{{ deploy_user }}/cloudflare-ufw/cloudflare-ufw.sh > /dev/null 2>&1'
+  become: false

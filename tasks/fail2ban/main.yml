@@ -1,0 +1,40 @@
+---
+- name: Ensure fail2ban is installed
+  apt:
+    pkg: fail2ban
+    state: present
+    cache_valid_time: "{{ cache_valid_time }}"
+    update_cache: yes
+
+- name: Ensure iptables-persistent is installed
+  apt:
+    pkg: iptables-persistent
+    state: present
+    cache_valid_time: "{{ cache_valid_time }}"
+    update_cache: yes
+
+- name: Configure jail.local
+  template:
+    src: etc/fail2ban/jail.local.j2
+    dest: /etc/fail2ban/jail.local
+    owner: root
+    group: root
+    mode: 0644
+  changed_when: False
+  register: fail2ban_config
+
+- name: Configure webserver-specific jails
+  template:
+    src: "{{ item }}"
+    dest: /etc/fail2ban/filter.d/{{ item | basename }}
+  with_fileglob:
+    - etc/fail2ban/filter.d/*.conf
+  register: fail2ban_nginx_config
+  when: host_role is defined and host_role == 'nginx_webserver'
+
+- name: restart fail2ban if config was changed
+  service: 
+    name: fail2ban
+    state: restarted
+    enabled: yes
+  when: fail2ban_nginx_config.changed or fail2ban_config.changed

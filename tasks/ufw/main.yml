@@ -1,0 +1,58 @@
+---
+- name: Ensure UFW is installed
+  apt:
+    pkg: ufw
+    state: present
+    cache_valid_time: "{{ cache_valid_time }}"
+    update_cache: yes
+
+- name: Ensure UFW logging is on
+  ufw:
+    logging: 'low'
+
+# - name: Reset UFW configuraton
+#   ufw:
+#     state: reset
+
+- name: Ensure UFW denies incoming connections by default
+  ufw:
+    state: enabled
+    direction: incoming
+    policy: deny
+
+- name: Ensure UFW allows outgoing connections by default
+  ufw:
+    state: enabled
+    direction: outgoing
+    policy: allow
+
+- name: Ensure SSH traffic is limited
+  ufw:
+    rule: limit
+    from_ip: "{{ ssh_allowed_ip }}"
+    port: "{{ ssh_port | int }}"
+    proto: tcp
+    comment: 'SSH'
+
+- name: Ensure group-wide rules are applied
+  ufw:
+    rule: allow
+    port: "{{ item.port }}"
+    proto: "{{ item.proto }}"
+    comment: "{{ item.comment }}"
+  with_items: "{{ ufw_rules_group }}"
+
+- name: Ensure host-specific rules are applied
+  ufw:
+    rule: allow
+    port: "{{ item.port }}"
+    proto: "{{ item.proto }}"
+    comment: "{{ item.comment }}"
+  with_items: "{{ ufw_rules_host }}"
+  when: 
+    - ufw_rules_host is defined
+    - ufw_rules_host is iterable
+
+- name: Ensure UFW is enabled
+  ufw:
+    state: enabled

@@ -1,0 +1,26 @@
+---
+# - include: secure_ssh/main.yml
+
+# - include: add_user/main.yml
+
+# - include: remove_default_user/main.yml
+
+# - include: set_hostname/main.yml
+
+# - include: unattended_upgrades/main.yml
+
+# - include: hosts_allow_deny/main.yml
+
+# - include: sendmail/main.yml
+
+# - include: ufw/main.yml
+
+# - include: cloudflare_ufw/main.yml
+#   when: host_role is defined and host_role == 'nginx_webserver'
+
+# - include: fail2ban/main.yml
+
+# - include: cloudflare_fail2ban/main.yml
+#   when: host_role is defined and host_role == 'nginx_webserver'
+
+- include: security/main.yml

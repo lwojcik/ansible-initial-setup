@@ -1,0 +1,73 @@
+---
+- name: Secure shared memory via fstab
+  lineinfile:
+    dest: /etc/fstab
+    regexp: "^tmpfs /run/shm tmpfs"
+    line: "tmpfs /run/shm tmpfs defaults,noexec,nosuid 0 0"
+    state: present
+  register: security_setup
+
+- name: Add custom banner message file
+  copy:
+    src: {{ banner_file }}
+    dest: /etc/issue.net
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Enable banner in sshd
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: "^.?Banner"
+    line: "Banner /etc/issue.net"
+    state: present
+    backrefs: yes
+  notify: restart ssh
+
+- name: Harden the networking layer via sysctl config
+  sysctl:
+    sysctl_file: /etc/sysctl.conf
+    name: "{{ item.key | regex_replace('^/\u200b/$', '') }}"
+    value: "{{ item.value }}"
+    sysctl_set: yes
+    state: present
+    reload: yes
+    ignoreerrors: yes
+  with_dict:
+    net.ipv4.conf.all.rp_filter: 1
+    net.ipv4.conf.default.rp_filter: 1
+    net.ipv4.icmp_echo_ignore_broadcasts: 1
+    net.ipv4.conf.all.accept_source_route: 0
+    net.ipv6.conf.all.accept_source_route: 0
+    net.ipv4.conf.default.accept_source_route: 0
+    net.ipv6.conf.default.accept_source_route: 0
+    net.ipv4.conf.all.send_redirects: 0
+    net.ipv4.conf.default.send_redirects: 0
+    net.ipv4.tcp_syncookies: 1
+    net.ipv4.tcp_max_syn_backlog: 2048
+    net.ipv4.tcp_synack_retries: 2
+    net.ipv4.tcp_syn_retries: 5
+    net.ipv4.conf.all.log_martians: 0
+    net.ipv4.icmp_ignore_bogus_error_responses: 1
+    net.ipv4.conf.all.accept_redirects: 0
+    net.ipv6.conf.all.accept_redirects: 0
+    net.ipv4.conf.default.accept_redirects: 0 
+    net.ipv6.conf.default.accept_redirects: 0
+
+- name: Configure host.conf
+  copy:
+    src: etc/host.conf
+    dest: /etc/host.conf
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Reboot the box if system config was changed
+  reboot:
+    msg: "Reboot initiated by Ansible"
+    connect_timeout: 5
+    reboot_timeout: 300
+    pre_reboot_delay: 0
+    post_reboot_delay: 30
+    test_command: uptime
+  when: security_setup.changed

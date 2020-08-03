@@ -1,0 +1,7 @@
+---
+- name: Ensure hosts.allow allows access to SSH for specified IPs
+  lineinfile:
+    dest: /etc/hosts.allow
+    regexp: "^sshd"
+    line: "sshd: ALL EXCEPT {{ ssh_allowed_ip }} : deny"
+    state: present

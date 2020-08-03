@@ -1,0 +1,7 @@
+---
+- name: Ensure sendmail is installed
+  apt:
+    pkg: sendmail
+    state: present
+    cache_valid_time: "{{ cache_valid_time }}"
+    update_cache: yes

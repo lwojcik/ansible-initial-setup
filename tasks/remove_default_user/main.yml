@@ -1,0 +1,6 @@
+---
+- name: Remove default user accounts
+  user:
+    name: "{{ default_username }}"
+    state: absent
+    remove: yes
