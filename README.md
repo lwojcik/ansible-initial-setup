@@ -20,6 +20,8 @@ default_hostname: debian.example.com
 ufw_rules_all:
   - { port: 80, proto: any, comment: 'HTTP' }
   - { port: 443, proto: any, comment: 'HTTPS' }
+ssh_notify_sender: "ssh@{{ fqdn }}"
+ssh_notify_recipient: "{{ hostname }}@lukem.net"
 fail2ban: {
   ignoreip: "{{ ssh_allowed_ip }}",
   bantime: 3600,
