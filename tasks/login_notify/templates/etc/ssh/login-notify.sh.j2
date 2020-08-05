@@ -1,0 +1,12 @@
+#!/bin/sh
+
+# Change these two lines:
+sender="{{ ssh_notify_sender }}"
+recipient="{{ ssh_notify_recipient }}"
+
+if [ "$PAM_TYPE" != "close_session" ]; then
+  host="`hostname`"
+  subject="SSH Login: $PAM_USER from $PAM_RHOST on $host"
+  message="`env`"
+  echo "$message" | mailx -r "$sender" -s "$subject" "$recipient"
+fi
