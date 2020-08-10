@@ -30,7 +30,7 @@
   with_fileglob:
     - etc/fail2ban/filter.d/*.conf
   register: fail2ban_nginx_config
-  when: host_role is defined and host_role == 'nginx_webserver'
+  when: 'host_role is defined and "nginx_webserver" in host_role'
 
 - name: restart fail2ban if config was changed
   service: 
