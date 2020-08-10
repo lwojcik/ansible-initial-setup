@@ -18,11 +18,11 @@
 - include: login_notify/main.yml
 
 - include: cloudflare_ufw/main.yml
-  when: host_role is defined and host_role == 'nginx_webserver'
+  when: '"nginx_webserver" in host_role'
 
 - include: fail2ban/main.yml
 
 - include: cloudflare_fail2ban/main.yml
-  when: host_role is defined and host_role == 'nginx_webserver'
+  when: '"nginx_webserver" in host_role'
 
 - include: security/main.yml
