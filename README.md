@@ -33,7 +33,3 @@ fail2ban: {
 }
 letsencrypt_email: "email.here@example.org"
 ```
-
-## License
-
-Licensed under MIT License. See [LICENSE](https://github.com/lwojcik/ansible-initial-setup/blob/master/LICENSE) for more information.
