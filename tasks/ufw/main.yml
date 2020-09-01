@@ -29,7 +29,7 @@
     state: enabled
     direction: outgoing
     policy: allow
-    become: true
+  become: true
 
 - name: Ensure SSH traffic is limited
   ufw:
