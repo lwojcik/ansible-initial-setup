@@ -15,7 +15,7 @@
 - name: Reset UFW configuraton
   ufw:
     state: reset
-  when: force_ufw_reset
+  when: force_ufw_reset is defined and force_ufw_reset is True
 
 - name: Ensure UFW denies incoming connections by default
   ufw:
