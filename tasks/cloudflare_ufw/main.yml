@@ -15,7 +15,7 @@
   command: sh '/home/{{ deploy_user }}/cloudflare-ufw/cloudflare-ufw.sh'
   register: result
   changed_when: '"Rule added" in result.stdout'
-  become: false
+  become: true
 
 - name: Schedule cloudflare-ufw.sh as weekly cron
   cron:
