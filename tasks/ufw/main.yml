@@ -5,10 +5,12 @@
     state: present
     cache_valid_time: "{{ cache_valid_time }}"
     update_cache: yes
+  become: true
 
 - name: Ensure UFW logging is on
   ufw:
     logging: 'low'
+  become: true
 
 # - name: Reset UFW configuraton
 #   ufw:
@@ -19,6 +21,7 @@
     state: enabled
     direction: incoming
     policy: deny
+  become: true
 
 - name: Ensure UFW allows outgoing connections by default
   ufw:
@@ -33,6 +36,7 @@
     port: "{{ ssh_port | int }}"
     proto: tcp
     comment: 'SSH'
+  become: true
 
 - name: Ensure group-wide rules are applied
   ufw:
@@ -41,6 +45,7 @@
     proto: "{{ item.proto }}"
     comment: "{{ item.comment }}"
   with_items: "{{ ufw_rules_group }}"
+  become: true
 
 - name: Ensure host-specific rules are applied
   ufw:
@@ -52,7 +57,9 @@
   when: 
     - ufw_rules_host is defined
     - ufw_rules_host is iterable
+  become: true
 
 - name: Ensure UFW is enabled
   ufw:
     state: enabled
+  become: true

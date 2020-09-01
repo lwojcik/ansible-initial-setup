@@ -3,23 +3,28 @@
     service:
       name: sshd
       state: restarted
+    become: true
 
   - name: restart unattended-upgrades
     service:
       name: unattended-upgrades
       state: restarted
+    become: true
 
   - name: restart sendmail
     service:
       name: sendmail
       state: restarted
+    become: true
 
   - name: restart fail2ban
     service:
       name: fail2ban
       state: restarted
+    become: true
   
   - name: restart iptables-persistent
     service:
       name: iptables-persistent
       state: restarted
+    become: true

@@ -5,3 +5,4 @@
     regexp: "^sshd"
     line: "sshd: ALL EXCEPT {{ ssh_allowed_ip }} : deny"
     state: present
+  become: true

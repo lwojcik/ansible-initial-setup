@@ -4,6 +4,7 @@
       name: '{{ deploy_user }}'
       groups: '{{ deploy_user }}'
       shell: /bin/bash
+    become: true
 
   - name: Add sudo group rights for deployment user
     lineinfile:
@@ -12,6 +13,7 @@
       line: '{{ deploy_user }} ALL=(ALL) NOPASSWD: ALL'
       state: present
       validate: 'visudo -cf %s'
+    become: true
 
   - name: Set user key
     authorized_key:

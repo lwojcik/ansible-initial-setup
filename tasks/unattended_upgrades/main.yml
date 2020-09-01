@@ -5,6 +5,7 @@
     state: present
     cache_valid_time: "{{ cache_valid_time }}"
     update_cache: yes
+  become: true
 
 - name: Ensure apt-listchanges is installed
   apt:
@@ -12,6 +13,7 @@
     state: present
     cache_valid_time: "{{ cache_valid_time }}"
     update_cache: yes
+  become: true
 
 - name: Configure APT auto-upgrades
   lineinfile:
@@ -25,10 +27,12 @@
     - regexp: "^APT::Periodic::Unattended-Upgrade"
       line: 'APT::Periodic::Unattended-Upgrade \"1\";'
   notify: restart unattended-upgrades
+  become: true
 
 - name: Ensure unattended-upgrades is running
   service:
     name: unattended-upgrades
     state: started
+  become: true
 
 # TODO: more 'conscious' config so that I know when it runs and what it does

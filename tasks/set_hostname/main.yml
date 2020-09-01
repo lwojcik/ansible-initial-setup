@@ -2,15 +2,18 @@
 - name: Ensure hostname is set
   hostname:
     name: '{{ hostname }}'
+  become: true
 
 - name: Remove default hostname from /etc/hosts
   lineinfile:
     dest: /etc/hosts
     regexp: '{{ default_hostname }}'
     state: absent
+  become: true
 
 - name: Ensure hostname is set in /etc/hosts
   lineinfile:
     dest: /etc/hosts
     regexp: '^127.0.1.1\t{{ fqdn }} {{ hostname }}$'
     line: "127.0.1.1\t{{ fqdn }} {{ hostname }}"
+  become: true

@@ -5,6 +5,7 @@
     state: present
     cache_valid_time: "{{ cache_valid_time }}"
     update_cache: yes
+  become: true
 
 - name: Add notification script
   template:
@@ -12,6 +13,7 @@
     dest: /etc/ssh/login-notify.sh
     mode: a+x
   register: login_notify
+  become: true
 
 - name: Add script to /etc/pam.d/sshd
   lineinfile:
@@ -20,9 +22,11 @@
     line: "session optional pam_exec.so seteuid /etc/ssh/login-notify.sh"
     state: present
   register: login_notify
+  become: true
 
 - name: Restart ssh if config changed
   service:
     name: ssh
     state: reloaded
   when: login_notify.changed == True
+  become: true

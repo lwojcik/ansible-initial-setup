@@ -5,6 +5,7 @@
     state: present
     cache_valid_time: "{{ cache_valid_time }}"
     update_cache: yes
+  become: true
 
 - name: Ensure iptables-persistent is installed
   apt:
@@ -12,6 +13,7 @@
     state: present
     cache_valid_time: "{{ cache_valid_time }}"
     update_cache: yes
+  become: true
 
 - name: Configure jail.local
   template:
@@ -22,6 +24,7 @@
     mode: 0644
   changed_when: False
   register: fail2ban_config
+  become: true
 
 - name: Configure webserver-specific jails
   template:
@@ -31,6 +34,7 @@
     - etc/fail2ban/filter.d/*.conf
   register: fail2ban_nginx_config
   when: 'host_role is defined and "nginx_webserver" in host_role'
+  become: true
 
 - name: restart fail2ban if config was changed
   service: 
@@ -38,3 +42,4 @@
     state: restarted
     enabled: yes
   when: fail2ban_nginx_config.changed or fail2ban_config.changed
+  become: true

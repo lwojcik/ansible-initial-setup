@@ -4,12 +4,12 @@
     repo: 'https://github.com/Paul-Reed/cloudflare-ufw.git'
     dest: '/home/{{ deploy_user }}/cloudflare-ufw'
     update: yes
-  become: false
 
 - name: Ensure cloudflare-ufw.sh is executable
   file:
     dest: '/home/{{ deploy_user }}/cloudflare-ufw/cloudflare-ufw.sh'
     mode: a+x
+  become: true
 
 - name: Run cloudflare-ufw.sh
   command: sh '/home/{{ deploy_user }}/cloudflare-ufw/cloudflare-ufw.sh'
@@ -25,4 +25,3 @@
     month: '*'
     weekday: '1'
     job: '/home/{{ deploy_user }}/cloudflare-ufw/cloudflare-ufw.sh > /dev/null 2>&1'
-  become: false

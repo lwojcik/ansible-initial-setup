@@ -1,45 +1,47 @@
 ---
-  - name: Make sure SSH is secure
-    lineinfile:
-      dest: /etc/ssh/sshd_config
-      regexp: "{{ item.regexp }}"
-      line: "{{ item.line }}"
-      state: present
-      validate: 'sshd -T -f %s'
-    with_items:
-      - regexp: "^PasswordAuthentication"
-        line: "PasswordAuthentication no"
-      - regexp: "^ChallengeResponseAuthentication"
-        line: "ChallengeResponseAuthentication no"
-      - regexp: "^PubkeyAuthentication"
-        line: "PubkeyAuthentication yes"
-      - regexp: "^PermitRootLogin"
-        line: "PermitRootLogin no"
-      - regexp: "^LoginGraceTime"
-        line: "LoginGraceTime 1m"
-      - regexp: "^StrictModes"
-        line: "StrictModes yes"
-      - regexp: "^UsePAM"
-        line: "UsePAM yes"
-      - regexp: "^PermitEmptyPasswords"
-        line: "PermitEmptyPasswords no"
-      - regexp: "^AuthorizedKeysFile"
-        line: "AuthorizedKeysFile .ssh/authorized_keys"
-      - regexp: "^X11Forwarding"
-        line: "X11Forwarding no"
-      - regexp: "^Port"
-        line: "Port {{ ssh_port }}"
-      - regexp: "^PrintMotd"
-        line: "PrintMotd no"
-      - regexp: "^MaxAuthTries"
-        line: "MaxAuthTries 6"
-      - regexp: "^MaxSessions"
-        line: "MaxSessions 3"
+- name: Make sure SSH is secure
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+    state: present
+    validate: 'sshd -T -f %s'
+  with_items:
+    - regexp: "^PasswordAuthentication"
+      line: "PasswordAuthentication no"
+    - regexp: "^ChallengeResponseAuthentication"
+      line: "ChallengeResponseAuthentication no"
+    - regexp: "^PubkeyAuthentication"
+      line: "PubkeyAuthentication yes"
+    - regexp: "^PermitRootLogin"
+      line: "PermitRootLogin no"
+    - regexp: "^LoginGraceTime"
+      line: "LoginGraceTime 1m"
+    - regexp: "^StrictModes"
+      line: "StrictModes yes"
+    - regexp: "^UsePAM"
+      line: "UsePAM yes"
+    - regexp: "^PermitEmptyPasswords"
+      line: "PermitEmptyPasswords no"
+    - regexp: "^AuthorizedKeysFile"
+      line: "AuthorizedKeysFile .ssh/authorized_keys"
+    - regexp: "^X11Forwarding"
+      line: "X11Forwarding no"
+    - regexp: "^Port"
+      line: "Port {{ ssh_port }}"
+    - regexp: "^PrintMotd"
+      line: "PrintMotd no"
+    - regexp: "^MaxAuthTries"
+      line: "MaxAuthTries 6"
+    - regexp: "^MaxSessions"
+      line: "MaxSessions 3"
+  become: true
 
-  - name: Limit SSH access to deployment user from specific IP
-    lineinfile:
-      dest: /etc/ssh/sshd_config
-      regexp: ^AllowUsers"
-      line: "AllowUsers {{ deploy_user }}@{{ ssh_allowed_ip }}"
-      state: present
-    notify: restart ssh
+- name: Limit SSH access to deployment user from specific IP
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: ^AllowUsers"
+    line: "AllowUsers {{ deploy_user }}@{{ ssh_allowed_ip }}"
+    state: present
+  notify: restart ssh
+  become: true

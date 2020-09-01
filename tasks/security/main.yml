@@ -6,6 +6,7 @@
     line: "tmpfs /run/shm tmpfs defaults,noexec,nosuid 0 0"
     state: present
   register: security_setup
+  become: true
 
 - name: Add custom banner message file
   copy:
@@ -14,6 +15,7 @@
     owner: root
     group: root
     mode: 0644
+  become: true
 
 - name: Enable banner in sshd
   lineinfile:
@@ -23,6 +25,7 @@
     state: present
     backrefs: yes
   notify: restart ssh
+  become: true
 
 - name: Harden the networking layer via sysctl config
   sysctl:
@@ -51,8 +54,9 @@
     net.ipv4.icmp_ignore_bogus_error_responses: 1
     net.ipv4.conf.all.accept_redirects: 0
     net.ipv6.conf.all.accept_redirects: 0
-    net.ipv4.conf.default.accept_redirects: 0 
+    net.ipv4.conf.default.accept_redirects: 0
     net.ipv6.conf.default.accept_redirects: 0
+  become: true
 
 - name: Configure host.conf
   copy:
@@ -61,6 +65,7 @@
     owner: root
     group: root
     mode: 0644
+  become: true
 
 - name: Reboot the box if system config was changed
   reboot:
@@ -71,3 +76,4 @@
     post_reboot_delay: 30
     test_command: uptime
   when: security_setup.changed
+  become: true

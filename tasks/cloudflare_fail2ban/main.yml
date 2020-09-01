@@ -3,14 +3,12 @@
   file:
     path: "/home/{{ deploy_user }}/cloudflare-ips/"
     state: directory
-  become: false
   changed_when: False
 
 - name: Download ips-v4
   get_url:
     url: https://www.cloudflare.com/ips-v4
     dest: "/home/{{ deploy_user }}/cloudflare-ips/ips-v4.txt"
-  become: false
   changed_when: False
 
 - name: Download ips-v6
@@ -38,6 +36,7 @@
   check_mode: true
   changed_when: false
   register: ipv4_check
+  become: true
 
 - name: Check if Cloudflare IPv6 addresses are present in jail.local
   lineinfile:
@@ -47,6 +46,7 @@
   check_mode: true
   changed_when: false
   register: ipv6_check
+  become: true
 
 - name: Append Cloudflare IPv4 addresses to ignoreip if not present
   lineinfile:
@@ -59,6 +59,7 @@
     line: 'ignoreip = 127.0.0.1/8 {{ fail2ban.ignoreip }} {{ ipsv4.content | b64decode | regex_replace("\n", " ") | trim }}'
   notify: restart fail2ban
   when: ipv4_check.found == 0
+  become: true
 
 - name: Append Cloudflare IPv6 addresses to ignoreip if not present
   lineinfile:
@@ -70,12 +71,14 @@
     regexp: '^(ignoreip = .*)$'
     line: 'ignoreip = 127.0.0.1/8 {{ fail2ban.ignoreip }} {{ ipsv4.content | b64decode | regex_replace("\n", " ") | trim }} {{ ipsv6.content | b64decode | regex_replace("\n", " ") | trim }}'
   when: ipv6_check.found == 0
+  become: true
 
 - name: Restart fail2ban if config was changed
   service:
     name: fail2ban
     state: reloaded
   when: ipv4_check.found == 0 or ipv6_check.found == 0
+  become: true
 
 - name: Remove cloudflare-ips directory
   file:

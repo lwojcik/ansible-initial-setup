@@ -4,3 +4,4 @@
     name: "{{ default_username }}"
     state: absent
     remove: yes
+  become: true
