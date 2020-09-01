@@ -12,9 +12,10 @@
     logging: 'low'
   become: true
 
-# - name: Reset UFW configuraton
-#   ufw:
-#     state: reset
+- name: Reset UFW configuraton
+  ufw:
+    state: reset
+  when: force_ufw_reset
 
 - name: Ensure UFW denies incoming connections by default
   ufw:
@@ -28,6 +29,7 @@
     state: enabled
     direction: outgoing
     policy: allow
+    become: true
 
 - name: Ensure SSH traffic is limited
   ufw:
